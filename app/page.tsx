@@ -18,6 +18,9 @@ export default function Home() {
   const [draft, setDraft] = useState("");
   const [socket, setSocket] = useState<Socket | null>(null);
   const [onlineCount, setOnlineCount] = useState(0);
+  const [rooms, setRooms] = useState<string[]>(["general"]);
+  const [currentRoom, setCurrentRoom] = useState("general");
+  const [newRoom, setNewRoom] = useState("");
 
   useEffect(() => {
     setUsername(window.localStorage.getItem("group-chat-username") ?? "");
@@ -31,6 +34,9 @@ export default function Home() {
     connection.on("presence:event", (event: PresenceEvent) => setMessages((current) => [
       ...current, { id: Date.now(), author: "시스템", text: event.text, time: "방금 전" }
     ]));
+    connection.on("room:list", (roomList: string[]) => setRooms(roomList));
+    connection.on("room:joined", (room: string) => { setCurrentRoom(room); setMessages([]); });
+    connection.emit("room:list");
     setSocket(connection);
     return () => { connection.disconnect(); };
   }, [username]);
@@ -42,6 +48,15 @@ export default function Home() {
     window.localStorage.setItem("group-chat-username", name);
     setUsername(name);
     setLoginName("");
+  }
+
+  function joinRoom(room: string) { socket?.emit("room:join", room); }
+  function createRoom(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const name = newRoom.trim();
+    if (!name) return;
+    socket?.emit("room:create", name);
+    setNewRoom("");
   }
 
   function handleLogout() {
@@ -78,6 +93,11 @@ export default function Home() {
           <div><p className="eyebrow">GROUP CHAT</p><h1>함께 이야기해요</h1></div>
           <div><span className="online-status">● {onlineCount}명 접속 중</span><button className="logout-button" onClick={handleLogout} type="button">로그아웃</button></div>
         </header>
+        <div className="room-toolbar">
+          <strong>채팅방</strong>
+          <div className="room-list">{rooms.map((room) => <button className={room === currentRoom ? "room-button active" : "room-button"} key={room} onClick={() => joinRoom(room)} type="button">#{room}</button>)}</div>
+          <form onSubmit={createRoom} className="room-create"><input value={newRoom} onChange={(event) => setNewRoom(event.target.value)} placeholder="새 방 이름" aria-label="새 채팅방 이름" /><button type="submit">만들기</button></form>
+        </div>
         <div className="message-list" aria-live="polite">
           {messages.map((message) => <article className="message" key={message.id}>
             <div className="message-meta"><strong>{message.author}</strong><time>{message.time}</time></div>
