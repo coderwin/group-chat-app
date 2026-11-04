@@ -30,6 +30,7 @@ export default function Home() {
     if (!username) return;
     const connection = io();
     connection.on("chat:message", (message: Message) => setMessages((current) => [...current, message]));
+    connection.on("room:history", (history: Message[]) => setMessages(history));
     connection.on("presence:count", (count: number) => setOnlineCount(count));
     connection.on("presence:event", (event: PresenceEvent) => setMessages((current) => [
       ...current, { id: Date.now(), author: "시스템", text: event.text, time: "방금 전" }
