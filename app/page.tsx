@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 type Message = { id: number; author: string; text: string; time: string };
+type PresenceEvent = { text: string };
 
 const initialMessages: Message[] = [
   { id: 1, author: "민지", text: "안녕하세요! 채팅방에 오신 것을 환영해요.", time: "오전 10:20" },
@@ -14,10 +15,15 @@ export default function Home() {
   const [messages, setMessages] = useState(initialMessages);
   const [draft, setDraft] = useState("");
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [onlineCount, setOnlineCount] = useState(0);
 
   useEffect(() => {
     const connection = io();
     connection.on("chat:message", (message: Message) => setMessages((current) => [...current, message]));
+    connection.on("presence:count", (count: number) => setOnlineCount(count));
+    connection.on("presence:event", (event: PresenceEvent) => setMessages((current) => [
+      ...current, { id: Date.now(), author: "시스템", text: event.text, time: "방금 전" }
+    ]));
     setSocket(connection);
     return () => { connection.disconnect(); };
   }, []);
@@ -35,7 +41,7 @@ export default function Home() {
       <section className="chat-card" aria-label="그룹 채팅">
         <header className="chat-header">
           <div><p className="eyebrow">GROUP CHAT</p><h1>함께 이야기해요</h1></div>
-          <span className="online-status">● 2명 접속 중</span>
+          <span className="online-status">● {onlineCount}명 접속 중</span>
         </header>
         <div className="message-list" aria-live="polite">
           {messages.map((message) => <article className="message" key={message.id}>
