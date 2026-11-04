@@ -9,6 +9,13 @@ h1 { margin: 0; font-size: 26px; }
 .online-status { color: #23835a; font-size: 13px; font-weight: 700; }
 .logout-button { margin-left: 12px; border: 0; background: transparent; color: #7b8497; cursor: pointer; font-size: 12px; }
 .message-list { display: grid; gap: 14px; min-height: 360px; padding: 28px 32px; background: #fafbfe; }
+.room-toolbar { display: grid; gap: 12px; padding: 16px 24px; border-bottom: 1px solid #edf0f5; }
+.room-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.room-button { border: 1px solid #dbe3f0; border-radius: 999px; padding: 7px 12px; color: #536078; background: #fff; cursor: pointer; }
+.room-button.active { border-color: #536dc5; color: #fff; background: #536dc5; }
+.room-create { display: flex; gap: 8px; }
+.room-create input { min-width: 0; flex: 1; border: 1px solid #dbe3f0; border-radius: 8px; padding: 8px 10px; }
+.room-create button { border: 0; border-radius: 8px; padding: 0 12px; color: #fff; background: #7d8fc9; cursor: pointer; }
 .message { width: fit-content; max-width: 80%; padding: 13px 16px; border-radius: 14px 14px 14px 4px; background: #fff; box-shadow: 0 3px 12px #1d35570d; }
 .message-meta { display: flex; gap: 10px; align-items: baseline; margin-bottom: 6px; }
 .message-meta strong { font-size: 13px; }
