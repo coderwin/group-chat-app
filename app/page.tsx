@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
 
 type Message = { id: number; author: string; text: string; time: string };
 
@@ -12,12 +13,20 @@ const initialMessages: Message[] = [
 export default function Home() {
   const [messages, setMessages] = useState(initialMessages);
   const [draft, setDraft] = useState("");
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  useEffect(() => {
+    const connection = io();
+    connection.on("chat:message", (message: Message) => setMessages((current) => [...current, message]));
+    setSocket(connection);
+    return () => { connection.disconnect(); };
+  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const text = draft.trim();
     if (!text) return;
-    setMessages((current) => [...current, { id: Date.now(), author: "나", text, time: "방금 전" }]);
+    socket?.emit("chat:message", { author: "나", text });
     setDraft("");
   }
 
