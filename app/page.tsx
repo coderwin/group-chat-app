@@ -12,12 +12,19 @@ const initialMessages: Message[] = [
 ];
 
 export default function Home() {
+  const [username, setUsername] = useState("");
+  const [loginName, setLoginName] = useState("");
   const [messages, setMessages] = useState(initialMessages);
   const [draft, setDraft] = useState("");
   const [socket, setSocket] = useState<Socket | null>(null);
   const [onlineCount, setOnlineCount] = useState(0);
 
   useEffect(() => {
+    setUsername(window.localStorage.getItem("group-chat-username") ?? "");
+  }, []);
+
+  useEffect(() => {
+    if (!username) return;
     const connection = io();
     connection.on("chat:message", (message: Message) => setMessages((current) => [...current, message]));
     connection.on("presence:count", (count: number) => setOnlineCount(count));
@@ -26,22 +33,50 @@ export default function Home() {
     ]));
     setSocket(connection);
     return () => { connection.disconnect(); };
-  }, []);
+  }, [username]);
+
+  function handleLogin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const name = loginName.trim();
+    if (!name) return;
+    window.localStorage.setItem("group-chat-username", name);
+    setUsername(name);
+    setLoginName("");
+  }
+
+  function handleLogout() {
+    window.localStorage.removeItem("group-chat-username");
+    setUsername("");
+    socket?.disconnect();
+    setSocket(null);
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const text = draft.trim();
     if (!text) return;
-    socket?.emit("chat:message", { author: "나", text });
+    socket?.emit("chat:message", { author: username, text });
     setDraft("");
   }
+
+  if (!username) return (
+    <main className="chat-shell">
+      <section className="chat-card" aria-label="로그인">
+        <header className="chat-header"><div><p className="eyebrow">GROUP CHAT</p><h1>채팅 시작하기</h1></div></header>
+        <form className="message-form" onSubmit={handleLogin}>
+          <input value={loginName} onChange={(event) => setLoginName(event.target.value)} placeholder="사용자 이름을 입력하세요" aria-label="사용자 이름" autoFocus />
+          <button type="submit">입장</button>
+        </form>
+      </section>
+    </main>
+  );
 
   return (
     <main className="chat-shell">
       <section className="chat-card" aria-label="그룹 채팅">
         <header className="chat-header">
           <div><p className="eyebrow">GROUP CHAT</p><h1>함께 이야기해요</h1></div>
-          <span className="online-status">● {onlineCount}명 접속 중</span>
+          <div><span className="online-status">● {onlineCount}명 접속 중</span><button className="logout-button" onClick={handleLogout} type="button">로그아웃</button></div>
         </header>
         <div className="message-list" aria-live="polite">
           {messages.map((message) => <article className="message" key={message.id}>

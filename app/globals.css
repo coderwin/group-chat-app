@@ -7,6 +7,7 @@ body { margin: 0; }
 .eyebrow { margin: 0 0 6px; color: #6277b8; font-size: 12px; font-weight: 700; letter-spacing: .12em; }
 h1 { margin: 0; font-size: 26px; }
 .online-status { color: #23835a; font-size: 13px; font-weight: 700; }
+.logout-button { margin-left: 12px; border: 0; background: transparent; color: #7b8497; cursor: pointer; font-size: 12px; }
 .message-list { display: grid; gap: 14px; min-height: 360px; padding: 28px 32px; background: #fafbfe; }
 .message { width: fit-content; max-width: 80%; padding: 13px 16px; border-radius: 14px 14px 14px 4px; background: #fff; box-shadow: 0 3px 12px #1d35570d; }
 .message-meta { display: flex; gap: 10px; align-items: baseline; margin-bottom: 6px; }
