@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "tsx server.ts",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production tsx server.ts",
     "lint": "next lint"
   },
   "dependencies": {
@@ -20,5 +20,6 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest"
+    ,"tsx": "latest"
   }
 }
