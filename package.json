@@ -13,13 +13,15 @@
     "react": "latest",
     "react-dom": "latest",
     "socket.io": "latest",
-    "socket.io-client": "latest"
+    "socket.io-client": "latest",
+    "better-sqlite3": "latest"
   },
   "devDependencies": {
     "typescript": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest"
-    ,"tsx": "latest"
+    ,"tsx": "latest",
+    "@types/better-sqlite3": "latest"
   }
 }

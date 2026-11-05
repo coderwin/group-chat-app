@@ -5,3 +5,4 @@ out
 !.env.example
 npm-debug.log*
 data/chat-data.json
+data/chat.db*
