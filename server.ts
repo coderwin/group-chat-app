@@ -37,8 +37,8 @@ app.prepare().then(() => {
       currentRoom = roomName;
       socket.join(currentRoom);
       emitPresence(currentRoom);
-      socket.emit("room:history", listMessages(currentRoom));
       socket.emit("room:joined", currentRoom);
+      socket.emit("room:history", listMessages(currentRoom));
     });
     socket.on("chat:message", (message: { author: string; text: string }) => {
       const savedMessage = saveMessage(currentRoom, message.author, message.text);
